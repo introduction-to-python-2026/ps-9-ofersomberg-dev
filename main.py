@@ -4,31 +4,27 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-
+from sklearn.tree import DecisionTreeClassifier
 # Load data
 df = pd.read_csv('parkinsons.csv')
+df = df.dropna()
+print(df.columns.to_list())
 
-# Select features and target
-X = df[['MDVP:Fo(Hz)', 'MDVP:Jitter(%)']]
+selected_features = ['RPDE','PPE']
+X = df[selected_fetures]
 y = df['status']
 
-# Scale
 scaler = MinMaxScaler()
 X_scaled = scaler.fit_transform(X)
 
-# Split
-X_train, X_val, y_train, y_val = train_test_split(
-    X_scaled, y, test_size=0.2, random_state=42
-)
+X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2)
 
-# Train model
-model = LogisticRegression()
-model.fit(X_train, y_train)
+DTC = DecisionTreeClassifier(max_depth = 3)
+DTC.fit(X_train, y_train)
 
-# Evaluate
-y_pred = model.predict(X_val)
-accuracy = accuracy_score(y_val, y_pred)
-print("Validation accuracy:", accuracy)
+y_pred = DTC.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(accuracy)
 
 # Save model
 joblib.dump(model, 'my_model.joblib')
