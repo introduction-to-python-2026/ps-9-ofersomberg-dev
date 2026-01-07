@@ -1,29 +1,34 @@
 import pandas as pd
-df = pd.read_csv('/content/parkinsons.csv')
-df = df.dropna()
-
-import seaborn as sns
-sns.pairplot(df, vars=['MDVP:Jitter(%)', 'MDVP:Shimmer'],hue='status')
-selected_features = ['MDVP:Jitter(%)', 'MDVP:Shimmer']
-x = df[selected_features]
-y = df['status']
-
+import joblib
 from sklearn.preprocessing import MinMaxScaler
-
-scaler = MinMaxScaler()
-x = scaler.fit_transform(x)
-
 from sklearn.model_selection import train_test_split
-
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
-
-from sklearn.neighbors import KNeighborsClassifier
-
-model = KNeighborsClassifier(n_neighbors=10)
-model.fit(x_train, y_train)
-
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-y_pred = model.predict(x_test)
-accuracy = accuracy_score(y_test, y_pred)
-print(f'Accuracy: {accuracy}')
+# Load data
+df = pd.read_csv('parkinsons.csv')
+
+# Select features and target
+X = df[['MDVP:Fo(Hz)', 'MDVP:Jitter(%)']]
+y = df['status']
+
+# Scale
+scaler = MinMaxScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Split
+X_train, X_val, y_train, y_val = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42
+)
+
+# Train model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Evaluate
+y_pred = model.predict(X_val)
+accuracy = accuracy_score(y_val, y_pred)
+print("Validation accuracy:", accuracy)
+
+# Save model
+joblib.dump(model, 'my_model.joblib')
