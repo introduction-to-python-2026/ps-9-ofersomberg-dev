@@ -1,2 +1,2 @@
-features: ['MDVP:Fo(Hz)', 'PPE']
+features: ['PPE', 'MDVP:Fo(Hz)']
 path: "my_model (1).joblib"
