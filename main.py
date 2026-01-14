@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score
 
 df = pd.read_csv('parkinsons.csv')
 selected_features = ['MDVP:Fo()Hz','PPE']
-X = df[selected_fetures]
+X = df[selected_features]
 y = df['status']
 
 scaler = MinMaxScaler()
